@@ -4,17 +4,18 @@ import json
 
 url_topics = 'https://www.brainyquote.com/topics/'
 
-def get_info_author(block):
+def get_page_with_request(page_url):  # no scrolling but no lag for webdriver
+    req = urllib.Request(page_url, headers={'User-Agent': "Magic Browser"})
+    con = urllib.urlopen(req)
+    return con.read()
 
-    info_html = str(block.find_all(
-        'div', class_='subnav-below-p')[0])
-    info_string = (block.find_all(
-        'div', class_='subnav-below-p')[0]).get_text().split('\n')
-    info_string_2 = ""
-    for element in info_string:
-        if(len(element) != 0):
-            info_string_2 += element + " "
-    return {'info_html': info_html, 'info_string': info_string_2}
+def get_page(page_url):
+    page = get_page_with_request(page_url)
+    return page
+
+def get_soup_page(page):
+    soup = BeautifulSoup(get_page(page), 'html.parser')
+    return soup
 
 def get_author_in_block(data, soup_block):
     data['author'] = soup_block.find_all('a', {'title' : 'view author'})[0].get_text()
@@ -54,45 +55,8 @@ def refactor_test_get_quotes_list(keyword,index):
         quote_list.append(data)
     return name_author, info_author, quote_list
 
-def get_page_with_request(page_url):  # no scrolling but no lag for webdriver
-    req = urllib.Request(page_url, headers={'User-Agent': "Magic Browser"})
-    con = urllib.urlopen(req)
-    return con.read()
-
-def get_page(page_url):
-    page = get_page_with_request(page_url)
-    return page
-
-def get_soup_page(page):
-    soup = BeautifulSoup(get_page(page), 'html.parser')
-    return soup
-
-
-def max_index_page(page):
-    soup = get_soup_page(page)
-    page_numbers = []
-    if soup.find('ul', class_='pagination bqNPgn pagination-sm'):
-        for link in soup.find('ul', class_='pagination bqNPgn pagination-sm').find_all('a'):
-            href_string = link.get('href')
-            if href_string and href_string.find('/authors/') != -1:
-                href_string = href_string[len('/authors/')+1:]
-                page_numbers.append(int(href_string))
-        pages = max(page_numbers)
-    else:
-        pages = 1
-    return pages
-
-
 def get_quote_in_block(data, soup_block):
     data['text'] = soup_block.find_all('a', class_='b-qt')[0].get_text().replace("\n","")
-    return data
-
-def get_keyword_in_block(data, soup_block):
-    keywords = []
-    # per ogni citazione prendo le keywords
-    for keyword in soup_block.find_all('a', class_='qkw-btn btn btn-xs oncl_klc'):
-        keywords.append(keyword.get_text())
-    data['keywords'] = keywords
     return data
 
 def atomic_operation(keyword,index):
@@ -100,4 +64,3 @@ def atomic_operation(keyword,index):
     author_object = {"quotes": quote_list}
     with open('./res/'+keyword+"_"+str(index)+'.json', 'w') as outfile:
         json.dump(author_object, outfile, sort_keys=True, indent=4)
-
