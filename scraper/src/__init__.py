@@ -7,6 +7,8 @@ from urllib.error import URLError, HTTPError
 import urllib.request as urllib
 import random
 from time import sleep
+import json 
+
 '''
 if __name__ == '__main__':
     letters = ['x', 'z']
@@ -33,9 +35,14 @@ if __name__ == '__main__':
         'dreams',
         'cool'
     ]
+    
+    topics = (open("./res/topics")).read().split("\n")[:1]
+
+
     for topic in topics:
         #get links pages
         last_index = parsing_functions.get_indexes_pages(topic)
+        print(last_index)
         for index in range(1,last_index+1):
            parsing_functions.atomic_operation(topic,index)
            delay = random.uniform(0, 3)

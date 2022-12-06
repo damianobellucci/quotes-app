@@ -188,7 +188,7 @@ def max_index_page(page):
 
 
 def get_quote_in_block(data, soup_block):
-    data['text'] = soup_block.find_all('a', class_='b-qt')[0].get_text()
+    data['text'] = soup_block.find_all('a', class_='b-qt')[0].get_text().replace("\n","")
     return data
 
 
@@ -227,6 +227,7 @@ def atomic_operation(keyword,index):
     name, info, quote_list = refactor_test_get_quotes_list(keyword,index)
     author_object = {"quotes": quote_list}
     # print(json.dumps(letters, indent=2))
+
     with open('../results/topics/'+keyword+"_"+str(index)+'.json', 'w') as outfile:
         json.dump(author_object, outfile, sort_keys=True, indent=4)
 
