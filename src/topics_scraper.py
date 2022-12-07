@@ -94,7 +94,6 @@ class Topics_scraper:
     def aggregate_topics_indexes(self):
         topics = os.listdir(self.path_results)
         map = {}
-
         for el in topics:
             topic, index = el.split(".")[0].split("_")
             if not topic in map.keys():
@@ -114,4 +113,4 @@ class Topics_scraper:
         json_object = json.dumps(output_map, indent=2)
         with open(self.path_output_aggregation, "w") as outfile:
             outfile.write(json_object)
-        print(tot)
+        #print(tot)
