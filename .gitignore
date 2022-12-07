@@ -5,4 +5,5 @@ debug.log
 .notes
 venv
 scraper/results/topics
-res/*
+res/topic_index/*
+res/topics/*
