@@ -20,14 +20,15 @@ class Topics_scraper:
         
     def start(self):
         print("Started.")
-        topics = (open(self.path_topics)).read().split("\n")
+        topics = (open(self.path_topics)).read().replace(" ","-").replace("'","").split("\n")
         for topic in topics:
+            print(f'topic:{topic}')
             last_index = self.__get_indexes_pages(topic)
             for index in range(1,last_index+1):
-                print(f'topic:{topic}, index:{index}')
+                #print(f'topic:{topic}, index:{index}')
                 self.__dump_topic_page(topic,index)
                 delay = random.uniform(0, 3)
-                sleep(delay)
+                sleep(delay) 
         print("Ended.")
         
     def __get_page_with_request(self,page_url):  # no scrolling but no lag for webdriver
@@ -56,6 +57,7 @@ class Topics_scraper:
             indexes = soup.find_all('a', class_='page-link')
             last = indexes[len(indexes)-2].get_text()
             return int(last)
+        return 1
         
     def __get_quotes_list(self,keyword,index):
         url = self.url_topics+keyword+'-quotes'+"_"+str(index)
